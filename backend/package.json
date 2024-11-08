@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.5.0",
+    "@elastic/elasticsearch": "^8.15.1",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^10.0.0",
+    "elasticsearch": "^16.7.3",
+    "express": "^4.17.3",
+    "express-session": "^1.18.1",
+    "html-to-text": "^9.0.5",
+    "imap": "^0.8.19",
+    "imap-simple": "^5.1.0",
+    "isomorphic-fetch": "^3.0.0",
+    "mailparser": "^3.7.1",
+    "readline-sync": "^1.4.10",
+    "short-uuid": "^5.2.0",
+    "simple-oauth2": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

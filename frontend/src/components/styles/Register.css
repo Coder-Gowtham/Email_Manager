@@ -1,0 +1,146 @@
+/* Global Styles */
+body {
+    margin: 0; /* Remove default margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(135deg, #00AFFF, #87CEFA, #5BBFFF); /* Bright light blue gradient */
+    background-size: 200% 200%; /* To make the gradient animated */
+    animation: gradientAnimation 15s ease infinite; /* Animation for smooth transition */
+  }
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* Container for Registration Form */
+  .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px; /* Padding for centering */
+  }
+  
+  .form-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the form */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center; /* Center text */
+    width: 100%;
+    max-width: 400px; /* Limit max width for form */
+  }
+  
+  /* Form Inputs and Styling */
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  input:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+    outline: none;
+  }
+  
+  h2 {
+    margin-bottom: 20px; /* Space below the heading */
+    font-size: 24px;
+    color: #333;
+  }
+  
+  p {
+    margin-bottom: 20px; /* Space below the paragraph */
+    line-height: 1.5; /* Improved line height for readability */
+    color: #555;
+  }
+  
+  /* Buttons Styles */
+  /* Buttons Styles */
+.register-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #218838 !important; /* Primary color for Register */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+.login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff !important; /* Secondary color for Login (Green) */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+  
+  .register-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .login-button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  /* Focus Effect */
+  .register-button:focus,
+  .login-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus effect for accessibility */
+  }
+  
+  
+  /* Error Message Styling */
+  .error-message {
+    color: red;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  
+  /* Link Styling */
+  .login-link {
+    color: #007bff; /* Link color */
+    cursor: pointer;
+  }
+  
+  .login-link:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (min-width: 600px) {
+    .register-container {
+      justify-content: center;
+      align-items: flex-start;
+    }
+  
+    .form-container {
+      padding: 30px; /* Reduce padding on larger screens */
+    }
+  
+    input {
+      font-size: 18px; /* Slightly larger font size for inputs on larger screens */
+    }
+  }
+  

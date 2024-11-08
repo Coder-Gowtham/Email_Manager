@@ -1,0 +1,50 @@
+version: '3.8'  # Specify the Docker Compose version
+
+services:
+  backend:
+    depends_on:
+      elasticsearch:
+        condition: service_healthy  # Ensure the backend waits for Elasticsearch to be healthy
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200  # URL to connect to Elasticsearch
+    networks:
+      - app-network  # Ensure the backend is connected to the network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network  # Ensure the frontend is connected to the network
+
+  elasticsearch:
+    image: elasticsearch:8.15.3
+    container_name: es01
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=elastic@123  # Set the initial password here
+    volumes:
+      - esdata:/usr/share/elasticsearch/data  # Persist data
+    networks:
+      - app-network  # Ensure Elasticsearch is connected to the network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]  # Health check command
+      interval: 30s  # Interval between health checks
+      timeout: 10s   # Timeout for each health check
+      retries: 5     # Number of retries before considering the service unhealthy
+
+volumes:
+  esdata:  # Declare a named volume for Elasticsearch data
+
+networks:
+  app-network:
+    driver: bridge  # Define the network using the bridge driver

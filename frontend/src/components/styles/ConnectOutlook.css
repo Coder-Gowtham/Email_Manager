@@ -1,0 +1,57 @@
+body {
+    background-color: #f0f0f0; /* Light background */
+    font-family: Arial, sans-serif;
+    margin: 0; /* Remove default margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+.connect-outlook-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    width: 90%; /* Full width on mobile */
+    max-width: 400px; /* Limit max width for the container */
+    background-color: #ffffff; /* White background for the form */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center; /* Center text */
+}
+
+h2 {
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+p {
+    margin-bottom: 20px; /* Space below the paragraph */
+    line-height: 1.5; /* Improved line height for readability */
+}
+
+.connect-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Primary color */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.connect-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.error-message {
+    color: red;
+    margin: 10px 0;
+}
+
+/* Media Queries for Responsiveness */
+@media (min-width: 600px) {
+    .connect-outlook-container {
+        flex-direction: column; /* Stacking remains for simplicity */
+    }
+}

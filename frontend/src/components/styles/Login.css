@@ -1,0 +1,97 @@
+body {
+  margin: 0; /* Remove default margin */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background: linear-gradient(135deg, #00AFFF, #87CEFA, #5BBFFF);
+  background-size: 200% 200%; /* To make the gradient animated */
+  animation: gradientAnimation 10s ease infinite; /* Animation for smooth transition */
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  width: 90%; /* Full width on mobile */
+  max-width: 400px; /* Limit max width for form */
+}
+
+.form-container {
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the form */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input:focus {
+  border-color: #007bff; /* Change border color on focus */
+}
+
+.login-button,
+.signup-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-button {
+  background-color: #007bff; /* Primary color */
+  color: white;
+}
+
+.signup-button {
+  background-color: #28a745; /* Green color for Sign Up */
+  color: white;
+}
+
+.login-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.signup-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+}
+
+.register-link {
+  color: #007bff; /* Link color */
+  cursor: pointer;
+}
+
+.register-link:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Media Queries for Responsiveness */
+@media (min-width: 600px) {
+  .login-container {
+    flex-direction: column; /* Stacking remains for simplicity */
+  }
+}
