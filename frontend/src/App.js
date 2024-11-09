@@ -4,6 +4,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import ConnectOutlook from './components/ConnectOutlook';
 import EmailDashboard from './components/EmailDashboard';
+import ConnectOutlookCallback from './components/ConnectOutlookCallback';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/connect-outlook" element={<ConnectOutlook />} />
         <Route path="/dashboard" element={<EmailDashboard />} />
-
+        <Route path="/connect-outlook-callback" element={<ConnectOutlookCallback />} />
       </Routes>
     </Router>
   );

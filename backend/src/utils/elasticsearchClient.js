@@ -1,7 +1,7 @@
 // elasticsearchClient.js
 const { Client } = require('@elastic/elasticsearch');
 const dotenv = require('dotenv');
-const {config} = require('./constants/environConfig')
+const {config} = require('../constants/environConfig')
 
 // Load environment variables from .env file
 dotenv.config();

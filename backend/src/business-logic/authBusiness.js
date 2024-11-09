@@ -5,10 +5,12 @@ const { ENTERING_TO, BUSINESS_LOGIC, STATUS_CODE, ERROR_CODE } = require('../con
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { fetchEmailsOutlook, } = require('./fetchEmailBusiness');
-const { storeNewEmails, lastSynced } = require('../services/userEmailService');
+const { storeNewEmails } = require('../services/userEmailService');
 const { updateUserDetails } = require('../services/userService');
 const { format } = require('date-fns');
 const userService = require('../services/userService.js');
+const { setSessionData, getSessionData } = require('../utils/sessionManager');
+
 
 const oauthConfig = {
     client: {
@@ -33,6 +35,7 @@ const connectOutlook = (req, res) => {
         response_mode: 'query',
         // prompt: 'consent'
     });
+
     res.json({ redirectUrl: authorizationUri });
 };
 
@@ -60,24 +63,26 @@ const handleCallback = async (req, res) => {
         const userName = decodedToken.preferred_username;
         if (userName) console.log(`userName : `, userName);
         else throw new Error("Unable to Fetch USER NAME");
+        const userMailBoxName = `${userName}_mailbox`;
         const fetchUserId = await userService.searchUser(userName, 'user_accounts');
         console.log(`fetchUserId || ${fetchUserId}`);
 
-        // Store the access token and refresh token in the session
-        req.session.token = accessToken.token.access_token;
-        req.session.refreshToken = accessToken.token.refresh_token;
-        req.session.userName = userName;
-        req.session.userId ? req.session.userId : fetchUserId;
-        req.session.userMailBoxName = `${userName}_mailbox`;
-        const userMailBoxName = `${userName}_mailbox`;
-        req.session.tokenExpiry = Date.now() + accessToken.token.expires_in * 1000;
+        setSessionData({
+            token: accessToken.token.access_token,
+            refreshToken: accessToken.token.refresh_token,
+            userName: userName,
+            userId: getSessionData().userId || fetchUserId,
+            userMailBoxName: userMailBoxName,
+            tokenExpiry: Date.now() + accessToken.token.expires_in * 1000
+        });
 
+        let sessionData = getSessionData();
+        console.log(`Check Session || `, sessionData);
 
-        const updateUserInfo = await updateUserDetails(req.session.userId || fetchUserId, req.session.token, userName, userMailBoxName);
+        const updateUserInfo = await updateUserDetails(sessionData.userId || fetchUserId, sessionData.token, sessionData.userName, 'user_accounts');
         console.log(`updateUserInfo || `, updateUserInfo);
 
-
-        const xoauth2Token = Buffer.from(`user=${userName}\x01auth=Bearer ${req.session.token}\x01\x01`).toString('base64');
+        const xoauth2Token = Buffer.from(`user=${userName}\x01auth=Bearer ${sessionData.token}\x01\x01`).toString('base64');
         const imapConfig = {
             user: process.env.USER_EMAIL,
             xoauth2: xoauth2Token,
@@ -87,19 +92,14 @@ const handleCallback = async (req, res) => {
             timeout: 50000,
         };
 
-        const lastSyncedTime = await lastSynced(req.session.userMailBoxName || userMailBoxName);
-        console.log(`lastSyncedTime || ${JSON.stringify(lastSyncedTime)}`);
-        const lastSyncedDate = format(new Date(lastSyncedTime), 'd-MMM-yyyy');
-        console.log(`lastSyncedDate || ${JSON.stringify(lastSyncedDate)}`);
-
-        await fetchEmailsOutlook(imapConfig, lastSyncedDate, lastSyncedTime)
+        await fetchEmailsOutlook(imapConfig)
             .then(async (resultEmails) => {
                 console.log(`Fetched emails:  ${JSON.stringify(resultEmails.length)}`);
-                await storeNewEmails((req.session.userMailBoxName || userMailBoxName), resultEmails, fetchUserId)
+                await storeNewEmails((sessionData.userMailBoxName || userMailBoxName), resultEmails, fetchUserId)
                     .then(result => {
                         console.log(`New Emails Successfully Synced with Database`, result);
                         console.log(`Fetched emails:  ${JSON.stringify(result)}`);
-                        res.json({ result });
+                        res.redirect('http://localhost:3000/connect-outlook-callback?status=success');
                     }).catch(storeEmailError => {
                         console.log(`Error while storing New Emails to Database`, storeEmailError);
                         throw new Error({
@@ -121,24 +121,27 @@ const handleCallback = async (req, res) => {
         console.error('Error during OAuth flow:', error);
         let errorCode = error?.status || STATUS_CODE.INTERNAL_SERVER_ERROR
         let errMsg = error?.message || 'AUTHENTICATION FAILED'
-        res.status(errorCode).send(errMsg);
+        // res.status(errorCode).send(errMsg);
+        res.redirect('http://localhost:3000/connect-outlook-callback?status=failure');
+
     }
 };
 
 async function refreshAccessToken(req) {
     console.log(`ENTERING REFRESH TOKEN LOGIC | refreshAccessToken`);
+    let sessionData = getSessionData();
 
-    if (Date.now() >= req.session.tokenExpiry) {
+    if (Date.now() >= sessionData.tokenExpiry) {
         try {
             const tokenParams = {
                 grant_type: 'refresh_token',
-                refresh_token: req.session.refreshToken
+                refresh_token: sessionData.refreshToken
             };
             const accessToken = await oauth2Client.refresh(tokenParams);
-            req.session.token = accessToken.token.access_token;
-            req.session.refreshToken = accessToken.token.refresh_token;
-            req.session.tokenExpiry = Date.now() + accessToken.token.expires_in * 1000;
-            console.log(`refreshAccessToken req.session || `, req.session);
+            sessionData.token = accessToken.token.access_token;
+            sessionData.refreshToken = accessToken.token.refresh_token;
+            sessionData.tokenExpiry = Date.now() + accessToken.token.expires_in * 1000;
+            console.log(`refreshAccessToken sessionData || `, sessionData);
         } catch (error) {
             console.error('Error refreshing access token:', error.message);
             throw new Error('Unable to refresh access token');

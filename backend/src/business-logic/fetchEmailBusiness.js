@@ -4,7 +4,7 @@ const { format } = require('date-fns');
 const Imap = require('imap');
 const { htmlToText } = require('html-to-text');
 
-const fetchEmailsOutlook = (imapConfig, lastSyncedDate, lastSyncedTime, batchSize = 100, fetchAll = false) => {
+const fetchEmailsOutlook = (imapConfig, batchSize = 100, fetchAll = false) => {
     return new Promise((resolve, reject) => {
         const imap = new Imap(imapConfig);
         let parsedEmails = [];
@@ -27,14 +27,6 @@ const fetchEmailsOutlook = (imapConfig, lastSyncedDate, lastSyncedTime, batchSiz
                 console.log('Fetched folders:', imapFolders); // Array of folder names
             });
 
-            // Convert lastSyncedDate to DD-MMM-YYYY format
-            if (lastSyncedDate && !isNaN(new Date(lastSyncedDate).getTime())) {
-                lastSyncedDate = format(new Date(lastSyncedDate), 'd-MMM-yyyy');
-            } else {
-                console.warn("Last synced date is invalid or undefined, defaulting to sync all emails.");
-                lastSyncedDate = format(new Date(0), 'd-MMM-yyyy'); // Epoch date for "all emails"
-            }
-
             const fetchFromFolder = (folderName) => {
                 return new Promise((fetchEmailResolve, fetchEmailReject) => {
                     imap.openBox(folderName, true, (err, box) => {
@@ -43,9 +35,7 @@ const fetchEmailsOutlook = (imapConfig, lastSyncedDate, lastSyncedTime, batchSiz
                             return fetchEmailReject(err);
                         }
 
-                        const searchCriteria = [['SINCE', lastSyncedDate]];
-
-                        imap.search(searchCriteria, (err, results) => {
+                        imap.search(['ALL'], (err, results) => {
                             if (err) {
                                 return fetchEmailReject(err);
                             }
@@ -90,8 +80,6 @@ const fetchEmailsOutlook = (imapConfig, lastSyncedDate, lastSyncedTime, batchSiz
 
                                             const emailDate = new Date(parsed.date);
 
-                                            console.log(`lastSyncedTime ${lastSyncedTime} < emailDate ${emailDate.toISOString()}`);
-                                            if (new Date(lastSyncedTime) < emailDate) {
                                                 parsedEmails.push({
                                                     message_id: parsed.messageId || '',
                                                     subject: parsed.subject || '',
@@ -104,10 +92,9 @@ const fetchEmailsOutlook = (imapConfig, lastSyncedDate, lastSyncedTime, batchSiz
                                                     flags: emailData.flags,
                                                     uid: emailData.uid,
                                                     bodystructure: emailData.bodystructure,
-                                                    isSeen: emailData.flags.includes('\\Seen')
+                                                    isSeen: emailData.flags.includes('\\Seen'),
                                                 });
                                                 console.log(`Parsed email from ${folderName}: ${parsed.messageId} || ${parsed.subject}`);
-                                            }
                                         } catch (parseErr) {
                                             console.error('Error parsing email:', parseErr);
                                         }

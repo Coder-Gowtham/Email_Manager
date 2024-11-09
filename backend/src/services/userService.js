@@ -1,5 +1,5 @@
 const { ENTERING_TO, SERVICE_METHOD, STATUS_CODE } = require('../constants/constants');
-const client = require('../elasticsearchClient');
+const client = require('../utils/elasticsearchClient');
 
 
 const searchUser = async (email, userIndexName) => {
@@ -163,37 +163,51 @@ const createIndicesService = async (indices, client) => {
 const updateUserDetails = async (userId, token, outlookEmail, userMailBoxName) => {
     try {
         // Check if the user exists in the index
-        const userExists = await client.exists({
-            index: 'user_accounts',
-            id: userId
+        const resp = await client.search({
+            index: 'user_accounts',  // Specify the index
+            body: {
+                query: {
+                    match: {
+                        user_id: userId  // Replace userId with the actual value you want to check
+                    }
+                }
+            }
         });
 
-        if (!userExists) {
+        if (resp?.hits?.total?.value > 0) {
+            console.log('User exists!');
+        } else {
+            console.log('User does not exist.');
+        }
+
+
+        if (resp.hits.hits.total.value > 0) {
+
+
+            // Update the user details
+            const response = await client.update({
+                index: 'user_accounts',
+                id: userId,
+                body: {
+                    doc: {
+                        userMailBoxName: userMailBoxName,
+                        access_token: token,
+                        outlook_email: outlookEmail
+                    }
+                }
+            });
+
+            return {
+                status: STATUS_CODE.SUCCESS,
+                message: `User details updated successfully for user_id ${userId}.`,
+                result: response
+            };
+        } else {
             return {
                 status: STATUS_CODE.NOT_FOUND,
                 message: `User with user_id ${userId} not found in index user_accounts.`
             };
         }
-
-        // Update the user details
-        const response = await client.update({
-            index: 'user_accounts',
-            id: userId,
-            body: {
-                doc: {
-                    userMailBoxName: userMailBoxName,
-                    access_token: token,
-                    outlook_email: outlookEmail
-                }
-            }
-        });
-
-        return {
-            status: STATUS_CODE.SUCCESS,
-            message: `User details updated successfully for user_id ${userId}.`,
-            result: response
-        };
-
     } catch (error) {
         console.error(`Error updating user details for user_id ${userId}:`, error.message || error);
         return {

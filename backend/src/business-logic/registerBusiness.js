@@ -2,6 +2,7 @@ const { ENTERING_TO, BUSINESS_LOGIC, STATUS_CODE, ERROR_CODE } = require('../con
 const userService = require('../services/userService.js');
 const bcrypt = require('bcrypt'); // Ensure bcrypt is imported
 const ShortUniqueId = require('short-uuid');
+const { setSessionData, getSessionData } = require('../utils/sessionManager');
 
 const registerUsersBusiness = async (reqBody, redirection, req) => {
     console.log(`${ENTERING_TO} ${BUSINESS_LOGIC} | registerUsersBusiness || ${JSON.stringify(reqBody)}`);
@@ -55,7 +56,7 @@ const registerUsersBusiness = async (reqBody, redirection, req) => {
     };
     const userId = generateUniqueId();
     console.log(`Generated User ID: ${userId}`);
-    req.session.userId = userId;
+    setSessionData({userId : userId})
 
     //hashing and salting the password
     const saltRounds = 10;

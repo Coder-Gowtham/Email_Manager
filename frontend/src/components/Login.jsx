@@ -16,22 +16,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const {data} = await loginUser(formData); // Assuming loginUser is a function to call the backend API
-      console.log(`Login response from backend : ${JSON.stringify(data)}`);
+        const { data } = await loginUser(formData); // Assuming loginUser is a function to call the backend API
+        console.log(`Login response from backend: ${JSON.stringify(data)}`);
 
-      if (data.status === 200) {        
-        navigate(data.url);
-      } else {
-        setErrorMessage(data.message || 'Something went wrong.');
-      }
+        if (data.status === 200) {        
+            navigate(data.url);
+        } else {
+            setErrorMessage(data.message || 'Something went wrong.');
+        }
     } catch (err) {
-      if (err.data && err.data.data) {
-        setErrorMessage(err.data.data.message || 'Login failed. Please try again later.');
-      } else {
-        setErrorMessage('Login failed. Please try again later.');
-      }
+        console.error(`Login error: ${JSON.stringify(err.response?.data || err.message)}`);
+
+        if (err.response?.data?.message) {
+            setErrorMessage(err.response.data.message);
+        } else {
+            setErrorMessage('Login failed. Please try again later.');
+        }
     }
-  };
+};
+
 
   return (
     <div className="login-container">

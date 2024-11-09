@@ -19,7 +19,15 @@ export const loginUser = (data) =>
   });
 
 export const loginWithOutlook = () => {
-  return API.get('/manager/users/auth/outlook'); // Adjust to match your backend OAuth endpoint
+  return API.get('/manager/users/auth/outlook');
 };
+export const updateEmail = () => {
+  return API.get('/manager/users/auth/outlook');
 
+}
+
+export const fetchEmailElastic = ({ folder }) => {
+  const url = `/manager/users/fetchEmailElastic?folder=${folder}`;
+  return API.get(url);
+};
 export default API;

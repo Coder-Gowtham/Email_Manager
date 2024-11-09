@@ -18,7 +18,7 @@ const environConfig = {
     ELASTICSEARCH_URL: process.env.UAT_ELASTICSEARCH_URL,
     ELASTICSEARCH_USERNAME: process.env.UAT_ELASTICSEARCH_USERNAME || 'elastic',
     ELASTICSEARCH_PASSWORD: process.env.UAT_ELASTICSEARCH_PASSWORD || 'elastic@123',
-    CORS_ORIGIN: process.env.UAT_CORS_ORIGIN,
+    CORS_ORIGIN: process.env.UAT_CORS_ORIGIN, // need to set
   }
 };
 

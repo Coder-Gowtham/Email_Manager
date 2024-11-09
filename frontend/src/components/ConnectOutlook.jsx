@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginWithOutlook } from '../api';
+import { loginWithOutlook, fetchEmailElastic } from '../api'; // Assuming you have this API call
 import './styles/ConnectOutlook.css';
 
 const ConnectOutlook = () => {
@@ -10,7 +10,6 @@ const ConnectOutlook = () => {
   const handleConnect = async () => {
     try {
       const response = await loginWithOutlook();
-      // Redirect to Outlook's authorization page if the backend response contains a URL
       if (response?.data?.redirectUrl) {
         window.location.href = response.data.redirectUrl;
       } else {
@@ -21,6 +20,31 @@ const ConnectOutlook = () => {
       setError('Failed to connect to Outlook. Please try again.');
     }
   };
+
+  const handleSuccessfulAuth = async (token) => {
+    try {
+      // Assuming the token is returned after successful authentication
+      const emailResponse = await fetchEmailElastic(); // Pass the token to your API
+      if (emailResponse?.data) {
+        // Store emails or update the app state as needed
+        navigate('/dashboard', { state: { emails: emailResponse.data } }); // Passing emails to dashboard
+      } else {
+        throw new Error('Failed to fetch emails');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load emails. Please try again.');
+    }
+  };
+
+  // Assuming you handle the OAuth token here in your dashboard page
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token'); // Get token from URL after OAuth redirect
+    if (token) {
+      handleSuccessfulAuth(token);
+    }
+  }, []);
 
   return (
     <div className="connect-outlook-container">
