@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from './environConfig';
 const API = axios.create({
-  baseURL: config.BACKEND_BASE_URL || 'http://localhost:5000/',
+  baseURL: config.REACT_APP_BACKEND_URL  || 'http://localhost:5000',
 });
 
 export const registerUser = (data) =>

@@ -7,13 +7,12 @@ const environConfig = {
     BACKEND_BASE_URL: process.env.DEV_BACKEND_BASE_URL
   },
   uat: {
-    PORT: '', //add this
+    PORT: '',
     BACKEND_BASE_URL: process.env.UAT_BACKEND_BASE_URL
 
   }
 };
 
-// Export the environment and the configuration
 module.exports = {
   environment,
   config: environConfig[environment],
