@@ -33,7 +33,7 @@ const connectOutlook = (req, res) => {
         scope: 'openid https://outlook.office.com/IMAP.AccessAsUser.All offline_access',
         response_type: 'code',
         response_mode: 'query',
-        // prompt: 'consent'
+        prompt: 'consent'
     });
 
     res.json({ redirectUrl: authorizationUri });
